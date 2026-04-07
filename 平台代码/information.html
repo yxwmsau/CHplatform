@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>历史建筑档案 · 红色街区（带图片）</title>
+    <!-- 字体与图标库 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fb;
+            color: #1e293b;
+            line-height: 1.5;
+            padding: 2rem 1.5rem;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        .page-header {
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .page-header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #b23b2c, #922b1f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .page-header h1 i { color: #b23b2c; font-size: 2rem; }
+        .page-header .back-link {
+            background: white;
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #334155;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            border: 1px solid #e9eef2;
+            transition: all 0.2s;
+        }
+        .page-header .back-link:hover {
+            background: #b23b2c;
+            color: white;
+            border-color: #b23b2c;
+        }
+
+        /* 搜索条 */
+        .search-section { margin-bottom: 2rem; }
+        .search-wrapper {
+            display: flex;
+            max-width: 700px;
+            background: white;
+            border-radius: 60px;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+        .search-wrapper:focus-within {
+            box-shadow: 0 15px 35px -12px rgba(178,59,44,0.2);
+            border-color: #b23b2c;
+        }
+        .search-wrapper input {
+            flex: 1;
+            padding: 1rem 1.8rem;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+        }
+        .search-wrapper button {
+            background: #b23b2c;
+            border: none;
+            color: white;
+            padding: 0 2.2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .search-wrapper button:hover { background: #922b1f; }
+
+        /* 筛选栏 */
+        .filters {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 8px 25px -8px rgba(0,0,0,0.06);
+            border: 1px solid #edf2f7;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 1.5rem 2rem;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 150px;
+        }
+        .filter-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .filter-group select {
+            padding: 0.7rem 1rem;
+            border-radius: 40px;
+            border: 1.5px solid #e2e8f0;
+            background: white;
+            font-size: 1rem;
+            color: #1e293b;
+            cursor: pointer;
+            transition: all 0.2s;
+            outline: none;
+            min-width: 160px;
+        }
+        .filter-group select:hover { border-color: #b23b2c; }
+        .filter-group select:focus {
+            border-color: #b23b2c;
+            box-shadow: 0 0 0 3px rgba(178,59,44,0.1);
+        }
+        .reset-btn {
+            background: #f1f5f9;
+            border: none;
+            padding: 0.7rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            margin-left: auto;
+            border: 1px solid #e2e8f0;
+        }
+        .reset-btn:hover { background: #e2e8f0; color: #1e293b; }
+
+        /* 结果统计 */
+        .result-stats {
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            color: #64748b;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .result-stats span { color: #b23b2c; font-weight: 700; }
+
+        /* 建筑卡片网格 */
+        .buildings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.8rem;
+            margin-bottom: 2rem;
+        }
+        .building-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 12px 30px -12px rgba(0,0,0,0.1);
+            transition: transform 0.25s, box-shadow 0.25s;
+            border: 1px solid #edf2f7;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: inherit;
+        }
+        .building-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 40px -16px rgba(178,59,44,0.2);
+            border-color: #f1d7d4;
+        }
+        .card-image {
+            height: 160px;
+            background: #cbd5e1; /* 后备背景色，图片加载时显示 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* 确保图片不溢出圆角 */
+        }
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 图片填充且不变形，可能裁剪 */
+            display: block;
+        }
+        .card-content { padding: 1.5rem 1.2rem 1.2rem; flex: 1; }
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #0f172a;
+        }
+        .card-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem 1rem;
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+            color: #475569;
+        }
+        .meta-item {
+            background: #f1f5f9;
+            padding: 0.25rem 0.9rem;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .meta-item i { color: #b23b2c; font-size: 0.8rem; }
+        .card-desc {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .card-footer {
+            padding: 0.8rem 1.2rem 1.2rem;
+            border-top: 1px solid #edf2f7;
+            font-size: 0.9rem;
+            color: #b23b2c;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .card-footer i { transition: transform 0.2s; }
+        .building-card:hover .card-footer i { transform: translateX(4px); }
+
+        /* 空状态 */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 32px;
+            color: #94a3b8;
+            font-size: 1.2rem;
+            border: 2px dashed #cbd5e1;
+        }
+        .no-results i { font-size: 3rem; margin-bottom: 1rem; color: #cbd5e1; }
+
+        /* 分页控件 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.8rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        .pagination button {
+            background: white;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.95rem;
+        }
+        .pagination button:hover:not(:disabled) {
+            background: #b23b2c;
+            color: white;
+            border-color: #b23b2c;
+        }
+        .pagination button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: #f1f5f9;
+        }
+        .pagination span {
+            font-size: 1rem;
+            color: #1e293b;
+            background: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+            font-weight: 500;
+        }
+
+        @media (max-width: 700px) {
+            body { padding: 1rem; }
+            .filters { flex-direction: column; align-items: stretch; }
+            .reset-btn { margin-left: 0; }
+            .search-wrapper button span { display: none; }
+            .search-wrapper button { padding: 0 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="page-header">
+        <h1><i class="fas fa-archway"></i> 历史建筑档案</h1>
+        <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> 返回首页</a>
+    </div>
+
+    <div class="search-section">
+        <div class="search-wrapper">
+            <input type="text" id="searchInput" placeholder="搜索建筑名称或描述..." aria-label="搜索">
+            <button id="searchBtn"><i class="fas fa-search"></i> <span>搜索</span></button>
+        </div>
+    </div>
+
+    <div class="filters" id="filterBar">
+        <div class="filter-group">
+            <label><i class="fas fa-clock"></i> 时代</label>
+            <select id="periodSelect">
+                <option value="">全部时代</option>
+                <option value="建党和大革命时期">建党和大革命时期</option>
+                <option value="红军长征时期">红军长征时期</option>
+                <option value="抗日战争时期">抗日战争时期</option>
+                <option value="解放战争时期">解放战争时期</option>
+                <option value="社会主义革命和建设时期">社会主义革命和建设时期</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label><i class="fas fa-map-marker-alt"></i> 地区</label>
+            <select id="regionSelect">
+                <option value="">全部地区</option>
+                <option value="京">京</option><option value="津">津</option><option value="冀">冀</option>
+                <option value="晋">晋</option><option value="蒙">蒙</option><option value="辽">辽</option>
+                <option value="吉">吉</option><option value="黑">黑</option><option value="沪">沪</option>
+                <option value="苏">苏</option><option value="浙">浙</option><option value="皖">皖</option>
+                <option value="闽">闽</option><option value="赣">赣</option><option value="鲁">鲁</option>
+                <option value="豫">豫</option><option value="鄂">鄂</option><option value="湘">湘</option>
+                <option value="粤">粤</option><option value="桂">桂</option><option value="琼">琼</option>
+                <option value="渝">渝</option><option value="川">川</option><option value="贵">贵</option>
+                <option value="云">云</option><option value="藏">藏</option><option value="陕">陕</option>
+                <option value="甘">甘</option><option value="青">青</option><option value="宁">宁</option>
+                <option value="新">新</option><option value="台">台</option><option value="港">港</option>
+                <option value="澳">澳</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label><i class="fas fa-tag"></i> 类别</label>
+            <select id="categorySelect">
+                <option value="">全部类别</option>
+                <option value="红色名人故居集中区">红色名人故居集中区</option>
+                <option value="革命事件发生地">革命事件发生地</option>
+                <option value="重要机构驻地旧址">重要机构驻地旧址</option>
+                <option value="抗日民主政府旧址">抗日民主政府旧址</option>
+            </select>
+        </div>
+        <button class="reset-btn" id="resetFilters"><i class="fas fa-undo-alt"></i> 重置筛选</button>
+    </div>
+
+    <div class="result-stats">
+        <span>共 <span id="buildingCount">0</span> 处历史建筑</span>
+    </div>
+
+    <div class="buildings-grid" id="buildingsGrid"></div>
+
+    <div class="pagination" id="pagination">
+        <button id="prevPage" disabled><i class="fas fa-chevron-left"></i> 上一页</button>
+        <span id="pageIndicator">第 1 页 / 共 1 页</span>
+        <button id="nextPage" disabled>下一页 <i class="fas fa-chevron-right"></i></button>
+    </div>
+</div>
+
+<script src="data/app-data.js"></script>
+<script>
+    (function() {
+        const ROWS_PER_PAGE = 3;
+
+        const buildingsData = (window.XHCJ_DATA && window.XHCJ_DATA.getArchiveBuildings && window.XHCJ_DATA.getArchiveBuildings()) || [];
+
+        const grid = document.getElementById('buildingsGrid');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const periodSelect = document.getElementById('periodSelect');
+        const regionSelect = document.getElementById('regionSelect');
+        const categorySelect = document.getElementById('categorySelect');
+        const resetBtn = document.getElementById('resetFilters');
+        const buildingCountSpan = document.getElementById('buildingCount');
+        const prevPageBtn = document.getElementById('prevPage');
+        const nextPageBtn = document.getElementById('nextPage');
+        const pageIndicator = document.getElementById('pageIndicator');
+
+        let currentPage = 1;
+        let filteredData = [];
+        let pageSize = 9;
+
+        function getColumnCount() {
+            if (!grid) return 3;
+            const style = window.getComputedStyle(grid);
+            const template = style.gridTemplateColumns;
+            if (template === 'none') return 3;
+            const cols = template.split(' ').filter(s => s.trim() !== '');
+            return cols.length || 3;
+        }
+
+        function calculatePageSize() {
+            const cols = getColumnCount();
+            return Math.max(1, cols * ROWS_PER_PAGE);
+        }
+
+        function refreshPageSize() {
+            pageSize = calculatePageSize();
+            return pageSize;
+        }
+
+        function renderCurrentPage() {
+            const total = filteredData.length;
+            const currentPageSize = pageSize;
+            const totalPages = Math.ceil(total / currentPageSize) || 1;
+            if (currentPage < 1) currentPage = 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            const start = (currentPage - 1) * currentPageSize;
+            const end = start + currentPageSize;
+            const pageData = filteredData.slice(start, end);
+
+            if (pageData.length === 0) {
+                grid.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-search"></i>
+                        <p>没有找到匹配的历史建筑</p>
+                    </div>
+                `;
+            } else {
+                let html = '';
+                pageData.forEach(building => {
+                    html += `
+                        <a href="${building.link}" class="building-card" target="_blank" rel="noopener">
+                            <div class="card-image">
+                                <img src="${building.imageUrl}" alt="${building.name}" loading="lazy">
+                            </div>
+                            <div class="card-content">
+                                <div class="card-title">${building.name}</div>
+                                <div class="card-meta">
+                                    <span class="meta-item"><i class="fas fa-map-pin"></i> ${building.region}</span>
+                                    <span class="meta-item"><i class="fas fa-clock"></i> ${building.period}</span>
+                                    <span class="meta-item"><i class="fas fa-tag"></i> ${building.category}</span>
+                                </div>
+                                <div class="card-desc">${building.description}</div>
+                            </div>
+                            <div class="card-footer">
+                                <span>查看详情</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                        </a>
+                    `;
+                });
+                grid.innerHTML = html;
+            }
+
+            buildingCountSpan.innerText = total;
+            pageIndicator.innerText = `第 ${currentPage} 页 / 共 ${totalPages} 页`;
+            prevPageBtn.disabled = (currentPage <= 1);
+            nextPageBtn.disabled = (currentPage >= totalPages);
+        }
+
+        function getFilteredData() {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            const period = periodSelect.value;
+            const region = regionSelect.value;
+            const category = categorySelect.value;
+
+            return buildingsData.filter(building => {
+                if (searchTerm) {
+                    const nameMatch = building.name.toLowerCase().includes(searchTerm);
+                    const descMatch = building.description.toLowerCase().includes(searchTerm);
+                    if (!nameMatch && !descMatch) return false;
+                }
+                if (period && building.period !== period) return false;
+                if (region && building.region !== region) return false;
+                if (category && building.category !== category) return false;
+                return true;
+            });
+        }
+
+        function refreshList(resetPage = true) {
+            filteredData = getFilteredData();
+            refreshPageSize();
+            if (resetPage) {
+                currentPage = 1;
+            }
+            renderCurrentPage();
+        }
+
+        function goToPage(page) {
+            const totalPages = Math.ceil(filteredData.length / pageSize) || 1;
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            renderCurrentPage();
+        }
+
+        searchInput.addEventListener('input', () => refreshList(true));
+        searchBtn.addEventListener('click', () => refreshList(true));
+        periodSelect.addEventListener('change', () => refreshList(true));
+        regionSelect.addEventListener('change', () => refreshList(true));
+        categorySelect.addEventListener('change', () => refreshList(true));
+        resetBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            periodSelect.value = '';
+            regionSelect.value = '';
+            categorySelect.value = '';
+            refreshList(true);
+        });
+
+        prevPageBtn.addEventListener('click', () => goToPage(currentPage - 1));
+        nextPageBtn.addEventListener('click', () => goToPage(currentPage + 1));
+
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                refreshPageSize();
+                currentPage = 1;
+                renderCurrentPage();
+            }, 150);
+        });
+
+        refreshList(true);
+    })();
+</script>
+</body>
+</html>

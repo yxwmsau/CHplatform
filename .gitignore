@@ -1,0 +1,28 @@
+# OS / editor
+Thumbs.db
+.DS_Store
+
+# Python / Node / cache
+__pycache__/
+node_modules/
+dist/
+build/
+
+# Large local assets kept outside git collaboration
+高斯vr成果/
+
+# Large media and 3D outputs
+*.zip
+*.mp4
+*.MOV
+*.ssproj
+*.psht
+*.ply
+*.las
+*.osgb
+*.b3dm
+*.pnts
+*.bin
+
+# Temporary download artifacts
+*.downloading

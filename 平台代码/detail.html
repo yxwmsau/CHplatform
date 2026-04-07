@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>周老嘴湘鄂西革命根据地纪念馆 · 星火赤江</title>
+    <!-- 字体与图标库 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fb;
+            color: #1e293b;
+            line-height: 1.5;
+            padding: 2rem 1.5rem;
+        }
+        .container { max-width: 1280px; margin: 0 auto; }
+        .back-link {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: white; padding: 0.6rem 1.4rem; border-radius: 40px;
+            text-decoration: none; color: #334155; font-weight: 500;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid #e9eef2;
+            transition: all 0.2s; margin-bottom: 1.5rem;
+        }
+        .back-link:hover { background: #b23b2c; color: white; border-color: #b23b2c; }
+        .back-link i { font-size: 0.9rem; }
+        /* 特色大图 - 适应横竖屏，完整显示 */
+        .feature-image {
+            width: 100%;
+            max-height: 600px;           /* 限制最大高度，避免竖屏图过高 */
+            object-fit: contain;          /* 保持比例完整显示，不裁剪 */
+            border-radius: 28px;
+            box-shadow: 0 20px 30px -10px rgba(0,0,0,0.15);
+            margin-bottom: 2rem;
+            border: 1px solid #e2e8f0;
+            background-color: #f5f5f5;    /* 背景色填充空白区域 */
+        }
+        .info-card {
+            background: white; border-radius: 24px; padding: 2rem;
+            box-shadow: 0 12px 30px -12px rgba(0,0,0,0.1); border: 1px solid #edf2f7;
+            margin-bottom: 2.5rem; border-left: 8px solid #b23b2c;
+        }
+        .info-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+        .info-item { display: flex; flex-direction: column; }
+        .info-label {
+            font-size: 0.85rem; font-weight: 600; color: #64748b;
+            text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 0.3rem;
+        }
+        .info-value {
+            font-size: 1.2rem; font-weight: 600; color: #0f172a;
+        }
+        .info-value small { font-size: 0.9rem; font-weight: 400; color: #475569; }
+        .short-story {
+            grid-column: 1 / -1; margin-top: 1rem; padding-top: 1rem;
+            border-top: 1px dashed #cbd5e1;
+        }
+        .short-story p { color: #334155; line-height: 1.7; }
+        .section-title {
+            font-size: 1.8rem; font-weight: 600; color: #0f172a;
+            margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.8rem;
+        }
+        .section-title i { color: #b23b2c; font-size: 1.6rem; }
+        .model-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem; margin-bottom: 2.5rem;
+        }
+        .model-card {
+            background: white; border-radius: 24px; overflow: hidden;
+            box-shadow: 0 12px 25px -10px rgba(0,0,0,0.08); border: 1px solid #edf2f7;
+            transition: transform 0.2s;
+        }
+        .model-card:hover { transform: translateY(-4px); box-shadow: 0 20px 30px -12px rgba(178,59,44,0.15); }
+        .model-preview {
+            height: 180px; background: #1e293b; display: flex; align-items: center;
+            justify-content: center; color: #cbd5e1; overflow: hidden;
+        }
+        .model-preview img {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+        }
+        .model-info { padding: 1.5rem 1.5rem 1.8rem; text-align: center; }
+        .model-info h3 { font-size: 1.4rem; font-weight: 600; margin-bottom: 0.8rem; color: #0f172a; }
+        .model-info p { color: #475569; margin-bottom: 1.5rem; font-size: 0.95rem; }
+        .btn {
+            display: inline-block; background: #b23b2c; color: white;
+            padding: 0.7rem 2rem; border-radius: 40px; text-decoration: none;
+            font-weight: 600; transition: background 0.2s; border: none; cursor: pointer;
+            font-size: 1rem;
+        }
+        .btn-outline {
+            background: transparent; border: 1.5px solid #b23b2c; color: #b23b2c;
+        }
+        .btn-outline:hover { background: #b23b2c; color: white; }
+        .btn:hover { background: #922b1f; }
+        .drawings-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem; margin-bottom: 2.5rem;
+        }
+        .drawing-item {
+            background: white; border-radius: 16px; overflow: hidden;
+            border: 1px solid #e2e8f0; transition: box-shadow 0.2s;
+        }
+        .drawing-item:hover { box-shadow: 0 10px 20px -8px rgba(0,0,0,0.1); }
+        .drawing-thumb {
+            height: 150px; background: #cbd5e1; overflow: hidden;
+            cursor: pointer;
+        }
+        .drawing-thumb img {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+        }
+        .drawing-info {
+            padding: 0.8rem 1rem 1.2rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .drawing-info span { font-weight: 500; color: #0f172a; }
+        .drawing-actions a {
+            color: #64748b; margin: 0 0.3rem; font-size: 1.1rem; transition: color 0.2s;
+        }
+        .drawing-actions a:hover { color: #b23b2c; }
+        .story-section {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;
+        }
+        .story-text {
+            background: white; border-radius: 24px; padding: 1.8rem; border: 1px solid #edf2f7;
+        }
+        .story-text h3 { font-size: 1.5rem; margin-bottom: 1rem; color: #0f172a; }
+        .story-text p { color: #334155; line-height: 1.8; margin-bottom: 1.5rem; }
+        .read-more { color: #b23b2c; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .story-photos {
+            background: white; border-radius: 24px; padding: 1.8rem; border: 1px solid #edf2f7;
+        }
+        .story-photos h3 { font-size: 1.5rem; margin-bottom: 1rem; color: #0f172a; }
+        .photo-wall {
+            display: grid; grid-template-columns: 1fr; gap: 0.8rem; margin-bottom: 1.2rem;
+        }
+        .photo-item {
+            aspect-ratio: 16 / 9; background: #cbd5e1; border-radius: 12px; overflow: hidden; cursor: pointer;
+        }
+        .photo-item img { width: 100%; height: 100%; object-fit: cover; }
+        .more-link { color: #b23b2c; font-weight: 500; text-decoration: none; display: flex; align-items: center; gap: 0.3rem; justify-content: flex-end; }
+        @media (max-width: 700px) {
+            .story-section { grid-template-columns: 1fr; }
+            .feature-image { max-height: 400px; } /* 移动端适当降低最大高度 */
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 返回链接 -->
+    <a href="information.html" class="back-link"><i class="fas fa-arrow-left"></i> 返回建筑档案</a>
+
+    <!-- 特色大图（最显眼位置） -->
+    <img class="feature-image" id="featureImage" src="images/湘鄂西大门.jpg" alt="周老嘴湘鄂西革命根据地纪念馆全景图">
+
+    <!-- 基本信息区 -->
+    <div class="info-card">
+        <div class="info-grid" id="infoGrid"></div>
+    </div>
+
+    <!-- 三维模型展示区（带预览图） -->
+    <div class="section-title">
+        <i class="fas fa-cube"></i>
+        <span>三维模型展示</span>
+    </div>
+    <div class="model-grid" id="modelGrid"></div>
+
+    <!-- 基础图纸区（平立剖图纸，缩略图使用本地图片） -->
+    <div class="section-title">
+        <i class="fas fa-draw-polygon"></i>
+        <span>基础图纸（平立剖）</span>
+    </div>
+    <div class="drawings-grid" id="drawingsGrid"></div>
+
+    <!-- 红色故事区（文字讲解+实景照片，仅一张） -->
+    <div class="section-title">
+        <i class="fas fa-book-open"></i>
+        <span>红色故事</span>
+    </div>
+    <div class="story-section">
+        <div class="story-text">
+            <h3 id="storyTitle">湘鄂西革命根据地的记忆中枢</h3>
+            <p id="storyBody"></p>
+            <a href="#" class="read-more" id="readMoreLink">阅读全文 <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="story-photos">
+            <h3>实景照片 · 用户上传</h3>
+            <div class="photo-wall" id="photoWall"></div>
+            <a href="#" class="more-link" id="morePhotosLink">查看更多用户照片 <i class="fas fa-chevron-right"></i></a>
+        </div>
+    </div>
+
+    <!-- 底部提示 -->
+    <div style="margin-top: 2rem; text-align: center; color: #94a3b8; font-size: 0.9rem;">
+        星火赤江 · 让历史被看见
+    </div>
+</div>
+<script src="data/app-data.js"></script>
+<script>
+    (function() {
+        const scene = window.XHCJ_DATA && window.XHCJ_DATA.getScene && window.XHCJ_DATA.getScene('zhoulaozui');
+        if (!scene) {
+            return;
+        }
+
+        document.title = scene.name + ' · 星火赤江';
+
+        const featureImage = document.getElementById('featureImage');
+        featureImage.src = scene.coverImage;
+        featureImage.alt = scene.name + '全景图';
+
+        document.getElementById('infoGrid').innerHTML = `
+            <div class="info-item">
+                <span class="info-label">建筑名称</span>
+                <span class="info-value">${scene.name}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">建成年代</span>
+                <span class="info-value">${scene.builtYear} <small>（${scene.builtYearNote}）</small></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">遗址地址</span>
+                <span class="info-value">${scene.address}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">保护级别</span>
+                <span class="info-value">${scene.protectionLevel}</span>
+            </div>
+            <div class="short-story">
+                <span class="info-label">红色故事·简说</span>
+                <p>${scene.shortStory}</p>
+            </div>
+        `;
+
+        document.getElementById('modelGrid').innerHTML = scene.models.map((model, index) => `
+            <div class="model-card">
+                <div class="model-preview">
+                    <img src="${model.previewImage}" alt="${model.title}预览">
+                </div>
+                <div class="model-info">
+                    <h3>${model.title}</h3>
+                    <p>${model.description}</p>
+                    <a href="#" class="btn${index === 1 ? ' btn-outline' : ''}" data-model-hint="${model.actionHint}">${model.actionLabel}</a>
+                </div>
+            </div>
+        `).join('');
+
+        document.getElementById('drawingsGrid').innerHTML = scene.drawings.map(drawing => `
+            <div class="drawing-item">
+                <div class="drawing-thumb" data-preview-url="${drawing.previewUrl}">
+                    <img src="${drawing.thumbnail}" alt="${drawing.title}缩略图">
+                </div>
+                <div class="drawing-info">
+                    <span>${drawing.title}</span>
+                    <div class="drawing-actions">
+                        <a href="#" data-preview-url="${drawing.previewUrl}" title="放大查看"><i class="fas fa-search-plus"></i></a>
+                        <a href="${drawing.downloadUrl}" download="${drawing.downloadName}" title="下载原图"><i class="fas fa-download"></i></a>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        document.getElementById('storyTitle').innerText = scene.longStoryTitle;
+        document.getElementById('storyBody').innerText = scene.longStory;
+
+        const readMoreLink = document.getElementById('readMoreLink');
+        readMoreLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            alert(scene.readMoreHint);
+        });
+
+        document.getElementById('photoWall').innerHTML = scene.gallery.map(photo => `
+            <div class="photo-item" data-photo-title="${photo.title}">
+                <img src="${photo.imageUrl}" alt="${photo.caption}">
+            </div>
+        `).join('');
+
+        document.getElementById('morePhotosLink').addEventListener('click', function(event) {
+            event.preventDefault();
+            alert('跳转至照片墙(完整版)');
+        });
+
+        document.querySelectorAll('[data-model-hint]').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                alert(this.getAttribute('data-model-hint'));
+            });
+        });
+
+        document.querySelectorAll('[data-preview-url]').forEach(trigger => {
+            trigger.addEventListener('click', function(event) {
+                event.preventDefault();
+                window.open(this.getAttribute('data-preview-url'), '_blank');
+            });
+        });
+
+        document.querySelectorAll('[data-photo-title]').forEach(item => {
+            item.addEventListener('click', function() {
+                alert('查看大图：' + this.getAttribute('data-photo-title'));
+            });
+        });
+    })();
+</script>
+</body>
+</html>

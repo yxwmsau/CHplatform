@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公众参与广场 · 红色历史街区</title>
+    <!-- 字体与图标库 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fb;
+            color: #1e293b;
+            line-height: 1.5;
+            padding: 2rem 1.5rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 页面头部 */
+        .page-header {
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .page-header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #b23b2c, #922b1f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .page-header h1 i {
+            color: #b23b2c;
+            font-size: 2rem;
+        }
+        .page-header .back-link {
+            background: white;
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #334155;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            border: 1px solid #e9eef2;
+            transition: all 0.2s;
+        }
+        .page-header .back-link:hover {
+            background: #b23b2c;
+            color: white;
+            border-color: #b23b2c;
+        }
+
+        /* 选项卡 */
+        .tab-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e9eef2;
+            padding-bottom: 0.5rem;
+        }
+        .tab-item {
+            font-size: 1.2rem;
+            font-weight: 600;
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px 40px 0 0;
+            cursor: pointer;
+            color: #64748b;
+            transition: all 0.2s;
+            background: transparent;
+            border: none;
+        }
+        .tab-item.active {
+            color: #b23b2c;
+            background: #fff1ef;
+            border-bottom: 3px solid #b23b2c;
+        }
+
+        /* 内容区域网格 */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        /* 卡片样式（广场动态 & 我的发布共用） */
+        .card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 12px 30px -12px rgba(0,0,0,0.1);
+            transition: transform 0.25s, box-shadow 0.25s;
+            border: 1px solid #edf2f7;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: inherit;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 40px -16px rgba(178,59,44,0.2);
+            border-color: #f1d7d4;
+        }
+        .card-media {
+            height: 180px;
+            background-color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #2c3e50;
+            position: relative;
+        }
+        .card-media video, .card-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .media-icon {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card-content {
+            padding: 1.2rem 1.2rem 1rem;
+            flex: 1;
+        }
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            color: #0f172a;
+        }
+        .card-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        .card-meta i {
+            color: #b23b2c;
+            width: 16px;
+        }
+        .card-desc {
+            color: #475569;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 1.2rem 1.2rem;
+            border-top: 1px solid #edf2f7;
+        }
+        .status-badge {
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .status-approved {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .status-pending {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+        .status-rejected {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+        .view-detail {
+            color: #b23b2c;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* 空状态 */
+        .no-data {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 32px;
+            color: #94a3b8;
+            font-size: 1.2rem;
+            border: 2px dashed #cbd5e1;
+        }
+        .no-data i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #cbd5e1;
+        }
+
+        /* 分页控件 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.8rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        .pagination button {
+            background: white;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.95rem;
+        }
+        .pagination button:hover:not(:disabled) {
+            background: #b23b2c;
+            color: white;
+            border-color: #b23b2c;
+        }
+        .pagination button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: #f1f5f9;
+        }
+        .pagination span {
+            font-size: 1rem;
+            color: #1e293b;
+            background: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+            font-weight: 500;
+        }
+
+        @media (max-width: 700px) {
+            body { padding: 1rem; }
+            .tab-item { font-size: 1rem; padding: 0.5rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 页面头部 -->
+    <div class="page-header">
+        <h1><i class="fas fa-users"></i> 公众参与广场</h1>
+        <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> 返回首页</a>
+    </div>
+
+    <!-- 选项卡 -->
+    <div class="tab-bar">
+        <button class="tab-item active" id="tabFeed">广场动态</button>
+        <button class="tab-item" id="tabMy">我的发布</button>
+    </div>
+
+    <!-- 内容区域（动态渲染） -->
+    <div id="contentContainer"></div>
+
+    <!-- 分页控件 -->
+    <div class="pagination" id="pagination">
+        <button id="prevPage" disabled><i class="fas fa-chevron-left"></i> 上一页</button>
+        <span id="pageIndicator">第 1 页 / 共 1 页</span>
+        <button id="nextPage" disabled>下一页 <i class="fas fa-chevron-right"></i></button>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---------- 模拟数据 ----------
+        // 所有图片均已改为本地路径，请将对应图片文件放入 images/ 文件夹
+        // 广场动态数据（用户发布的内容）
+        const feedData = [
+            {
+                id: 8,
+                userName: '湖北老区',
+                location: '监利·周老嘴',
+                description: '周老嘴革命旧址群，湘鄂西根据地中心。',
+                imageUrl: 'images/zhoulaozui.jpg',  // 本地图片：周老嘴
+                type: 'image',
+                time: '2025-02-13 08:50',
+                likes: 11,
+                comments: 1
+            },
+            {
+                id: 1,
+                userName: '红色记忆',
+                userAvatar: '👤',
+                location: '乌鲁木齐·八路军办事处',
+                description: '今天参观了八路军驻新疆办事处，建筑保存得非常完好，感受到革命先辈的奋斗精神。',
+                imageUrl: 'images/xinjiang.jpg',     // 本地图片：八路军办事处
+                type: 'image',
+                time: '2025-02-20 14:30',
+                likes: 24,
+                comments: 5
+            },
+            {
+                id: 2,
+                userName: '长征路上',
+                location: '遵义·会议会址',
+                description: '遵义会议会址的实景，内部陈列很震撼。',
+                imageUrl: 'images/zunyihuiyi.jpg',       // 本地图片：遵义会址
+                type: 'image',
+                time: '2025-02-19 09:15',
+                likes: 42,
+                comments: 8
+            },
+            {
+                id: 3,
+                userName: '井冈山精神',
+                location: '井冈山·黄洋界',
+                description: '黄洋界哨口，当年炮声隆隆，如今游客如织。',
+                imageUrl: 'images/jinggangshan.jpg', // 本地图片：黄洋界
+                type: 'video',
+                time: '2025-02-18 16:20',
+                likes: 31,
+                comments: 3
+            },
+            {
+                id: 4,
+                userName: '西柏坡',
+                location: '石家庄·西柏坡',
+                description: '中共中央旧址，七届二中全会会址。',
+                imageUrl: 'images/xibaipo.jpg',     // 本地图片：西柏坡
+                type: 'image',
+                time: '2025-02-17 11:10',
+                likes: 17,
+                comments: 2
+            },
+            {
+                id: 5,
+                userName: '延安精神',
+                location: '延安·宝塔山',
+                description: '宝塔山夜景，灯光璀璨。',
+                imageUrl: 'images/yanangeming.jpg',       // 本地图片：宝塔山
+                type: 'image',
+                time: '2025-02-16 19:45',
+                likes: 53,
+                comments: 12
+            },
+            {
+                id: 6,
+                userName: '红色旅行家',
+                location: '上海·一大会址',
+                description: '石库门建筑，中国共产党诞生地。',
+                imageUrl: 'images/yidahuizhi.jpg',        // 本地图片：一大会址
+                type: 'image',
+                time: '2025-02-15 10:30',
+                likes: 67,
+                comments: 9
+            },
+            {
+                id: 7,
+                userName: '湖南伢子',
+                location: '韶山·毛泽东故居',
+                description: '毛主席故居，游客很多。',
+                imageUrl: 'images/maozedong.jpg',   // 本地图片：毛泽东故居
+                type: 'image',
+                time: '2025-02-14 13:20',
+                likes: 29,
+                comments: 4
+            },
+            {
+                id: 9,
+                userName: '太行山',
+                location: '左权·麻田',
+                description: '八路军总部旧址，太行深处。',
+                imageUrl: 'images/balujunzongbu.jpg',      // 本地图片：麻田
+                type: 'video',
+                time: '2025-02-12 15:40',
+                likes: 8,
+                comments: 0
+            },
+            {
+                id: 10,
+                userName: '红岩',
+                location: '重庆·红岩革命纪念馆',
+                description: '红岩精神发源地，参观学习。',
+                imageUrl: 'images/hongyangeming.jpg',     // 本地图片：红岩
+                type: 'image',
+                time: '2025-02-11 09:30',
+                likes: 22,
+                comments: 3
+            }
+        ];
+
+        // 我的发布数据（当前用户上传的内容）
+        const myPostsData = [
+            {
+                id: 105,
+                description: '周老嘴旧址群照片',
+                imageUrl: 'images/湘鄂西.jpg',    // 本地图片：我的周老嘴
+                type: 'image',
+                time: '2025-02-10 11:20',
+                status: 'pending'
+            },
+            {
+                id: 101,
+                description: '我拍的遵义会议会址',
+                imageUrl: 'images/遵义会议.jpg',         // 本地图片：我的遵义
+                type: 'image',
+                time: '2025-02-18 10:22',
+                status: 'approved'
+            },
+            {
+                id: 102,
+                description: '延安宝塔山全景',
+                imageUrl: 'images/延安宝塔山.jpg',         // 本地图片：我的宝塔
+                type: 'image',
+                time: '2025-02-16 16:45',
+                status: 'pending'
+            },
+            {
+                id: 103,
+                description: '西柏坡纪念馆视频',
+                imageUrl: 'images/西柏坡纪念馆.jpg',       // 本地图片：我的西柏坡（视频缩略图）
+                type: 'video',
+                time: '2025-02-14 13:10',
+                status: 'approved'
+            },
+            {
+                id: 104,
+                description: '井冈山黄洋界',
+                imageUrl: 'images/井冈山黄洋界.jpg',  // 本地图片：我的黄洋界
+                type: 'image',
+                time: '2025-02-12 09:30',
+                status: 'rejected'
+            },
+            {
+                id: 106,
+                description: '一大会址内景',
+                imageUrl: 'images/一大会址内景.jpg',          // 本地图片：我的大会址
+                type: 'image',
+                time: '2025-02-08 14:15',
+                status: 'approved'
+            }
+        ];
+
+        // 当前选中的选项卡: 'feed' 或 'my'
+        let currentTab = 'feed';
+        // 当前页码
+        let currentPage = 1;
+        // 每页显示条数（固定6条）
+        const PAGE_SIZE = 6;
+
+        // DOM 元素
+        const contentContainer = document.getElementById('contentContainer');
+        const paginationDiv = document.getElementById('pagination');
+        const prevBtn = document.getElementById('prevPage');
+        const nextBtn = document.getElementById('nextPage');
+        const pageIndicator = document.getElementById('pageIndicator');
+        const tabFeed = document.getElementById('tabFeed');
+        const tabMy = document.getElementById('tabMy');
+
+        // 获取当前显示的数据（根据选项卡）
+        function getCurrentData() {
+            return currentTab === 'feed' ? feedData : myPostsData;
+        }
+
+        // 渲染卡片（根据数据和选项卡类型）
+        function renderCards(dataSlice) {
+            if (dataSlice.length === 0) {
+                return `<div class="no-data"><i class="fas fa-camera"></i><p>暂无内容</p></div>`;
+            }
+
+            let html = '';
+            if (currentTab === 'feed') {
+                // 广场动态卡片
+                dataSlice.forEach(item => {
+                    html += `
+                        <div class="card" onclick="alert('查看详情：${item.description}')">
+                            <div class="card-media">
+                                <img src="${item.imageUrl}" alt="${item.location}" style="width:100%; height:100%; object-fit:cover;">
+                                ${item.type === 'video' ? '<div class="media-icon"><i class="fas fa-play"></i></div>' : ''}
+                            </div>
+                            <div class="card-content">
+                                <div class="card-title">${item.location}</div>
+                                <div class="card-meta">
+                                    <i class="fas fa-user"></i> ${item.userName}
+                                    <i class="fas fa-clock" style="margin-left:auto;"></i> ${item.time}
+                                </div>
+                                <div class="card-desc">${item.description}</div>
+                            </div>
+                            <div class="card-footer">
+                                <span><i class="fas fa-heart"></i> ${item.likes} · <i class="fas fa-comment"></i> ${item.comments}</span>
+                                <span class="view-detail">查看 <i class="fas fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                // 我的发布卡片
+                dataSlice.forEach(item => {
+                    let statusClass = '';
+                    let statusText = '';
+                    if (item.status === 'approved') {
+                        statusClass = 'status-approved';
+                        statusText = '审核通过';
+                    } else if (item.status === 'pending') {
+                        statusClass = 'status-pending';
+                        statusText = '待审核';
+                    } else {
+                        statusClass = 'status-rejected';
+                        statusText = '未通过';
+                    }
+
+                    html += `
+                        <div class="card" onclick="alert('查看详情：${item.description}')">
+                            <div class="card-media">
+                                <img src="${item.imageUrl}" alt="${item.description}" style="width:100%; height:100%; object-fit:cover;">
+                                ${item.type === 'video' ? '<div class="media-icon"><i class="fas fa-play"></i></div>' : ''}
+                            </div>
+                            <div class="card-content">
+                                <div class="card-title">${item.description}</div>
+                                <div class="card-meta">
+                                    <i class="fas fa-calendar"></i> ${item.time}
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <span class="status-badge ${statusClass}">${statusText}</span>
+                                <span class="view-detail">查看 <i class="fas fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            return html;
+        }
+
+        // 渲染当前页面
+        function render() {
+            const data = getCurrentData();
+            const total = data.length;
+            const totalPages = Math.ceil(total / PAGE_SIZE) || 1;
+
+            // 调整当前页码
+            if (currentPage < 1) currentPage = 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            const start = (currentPage - 1) * PAGE_SIZE;
+            const end = start + PAGE_SIZE;
+            const pageData = data.slice(start, end);
+
+            const gridHtml = renderCards(pageData);
+            contentContainer.innerHTML = `<div class="content-grid">${gridHtml}</div>`;
+
+            // 更新分页状态
+            pageIndicator.innerText = `第 ${currentPage} 页 / 共 ${totalPages} 页`;
+            prevBtn.disabled = (currentPage <= 1);
+            nextBtn.disabled = (currentPage >= totalPages);
+        }
+
+        // 切换选项卡
+        function switchTab(tab) {
+            if (tab === currentTab) return;
+            currentTab = tab;
+            currentPage = 1; // 重置到第一页
+            // 更新选项卡按钮样式
+            if (tab === 'feed') {
+                tabFeed.classList.add('active');
+                tabMy.classList.remove('active');
+            } else {
+                tabMy.classList.add('active');
+                tabFeed.classList.remove('active');
+            }
+            render();
+        }
+
+        // 事件绑定
+        tabFeed.addEventListener('click', () => switchTab('feed'));
+        tabMy.addEventListener('click', () => switchTab('my'));
+
+        prevBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                render();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            const data = getCurrentData();
+            const totalPages = Math.ceil(data.length / PAGE_SIZE);
+            if (currentPage < totalPages) {
+                currentPage++;
+                render();
+            }
+        });
+
+        // 初始化渲染
+        render();
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>红色历史街区 · 互动地图（多瓦片源）</title>
+    <!-- Leaflet 核心样式和脚本 (多CDN备份) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Font Awesome 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+        body {
+            background: #f5f7fb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+        }
+        .header {
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+        .header h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(145deg, #b23b2c, #8b1e1e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header p {
+            color: #475569;
+            font-size: 1.2rem;
+        }
+        .map-container {
+            width: 100%;
+            max-width: 1200px;
+            height: 550px;
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            border: 1px solid #e9eef2;
+            margin: 1.5rem auto;
+            position: relative;
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+            background: #c8e0e0; /* 底色 */
+        }
+        /* 瓦片切换按钮 */
+        .tile-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border: 1px solid #ddd;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        .tile-switcher:hover {
+            background: #f0f0f0;
+        }
+        .tile-switcher i {
+            color: #b23b2c;
+        }
+        /* 红色标记样式 */
+        .custom-marker {
+            background: #b23b2c;
+            border: 3px solid white;
+            border-radius: 50%;
+            width: 24px !important;
+            height: 24px !important;
+            box-shadow: 0 0 0 4px rgba(178,59,44,0.3);
+            transition: all 0.2s;
+        }
+        .custom-marker:hover {
+            transform: scale(1.2);
+            background: #e04e3a;
+        }
+        /* 信息卡片 */
+        .info-panel {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.15);
+            margin: 1rem auto 2rem;
+            padding: 1.8rem 2.5rem;
+            max-width: 1000px;
+            width: 100%;
+            border-left: 8px solid #b23b2c;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        .info-text {
+            flex: 2;
+            min-width: 280px;
+        }
+        .info-text h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 0.3rem;
+        }
+        .info-text .location {
+            color: #b23b2c;
+            font-weight: 500;
+            font-size: 1.1rem;
+            margin-bottom: 0.7rem;
+        }
+        .info-text .desc {
+            color: #475569;
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+        .info-link {
+            background: #b23b2c;
+            color: white;
+            padding: 0.9rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: all 0.2s;
+            box-shadow: 0 8px 20px -8px #b23b2c;
+            white-space: nowrap;
+        }
+        .info-link:hover {
+            background: #922b1f;
+            transform: translateY(-2px);
+        }
+        .legend {
+            display: flex;
+            gap: 2.5rem;
+            margin: 0.5rem auto 1.5rem;
+            max-width: 1000px;
+            width: 100%;
+            color: #334155;
+            padding: 0 1rem;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .legend-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #b23b2c;
+            box-shadow: 0 0 0 4px rgba(178,59,44,0.2);
+        }
+        footer {
+            color: #64748b;
+            margin: 1rem 0;
+        }
+        /* 提示条 */
+        .hint {
+            background: #fff3cd;
+            border: 1px solid #ffe69c;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            margin-bottom: 0.5rem;
+            color: #856404;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        @media (max-width: 700px) {
+            .header h1 { font-size: 2rem; }
+            .map-container { height: 400px; }
+            .info-panel { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>红色历史街区 · 全国分布图</h1>
+        <p>点击地图上的红色标记，查看街区详情</p>
+    </div>
+
+    <!-- 提示区域 -->
+    <div class="hint" id="hintMessage">
+        <i class="fas fa-info-circle"></i>
+        <span>如果地图显示为灰色或网格，请点击右上角“切换瓦片”按钮尝试其他地图源。</span>
+    </div>
+
+    <!-- 地图容器 -->
+    <div class="map-container">
+        <div id="map"></div>
+        <!-- 瓦片切换按钮 -->
+        <div class="tile-switcher" id="switchTileBtn">
+            <i class="fas fa-sync-alt"></i> 切换瓦片
+        </div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><span class="legend-dot"></span> 红色历史街区（点击查看）</div>
+    </div>
+
+    <!-- 信息卡片（默认显示乌鲁木齐） -->
+    <div class="info-panel" id="infoPanel">
+        <div class="info-text" id="infoText">
+            <h2 id="infoTitle">周老嘴老正街红色历史街区</h2>
+            <div class="location" id="infoLocation"><i class="fas fa-map-pin"></i> 湖北省 · 荆州</div>
+            <div class="desc" id="infoDesc">湘鄂西革命根据地中心，全国重点文物保护单位，包含湘鄂西省委、省苏维埃政府旧址等。</div>
+        </div>
+        <a href="#" id="detailLink" class="info-link" target="_blank" rel="noopener">
+            <span>深入查看街区</span> <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <footer>数据来源：全国重点文物保护单位 · 红色历史街区信息总览</footer>
+
+    <script src="data/app-data.js"></script>
+    <script>
+        window.addEventListener('load', function() {
+            if (typeof L === 'undefined') {
+                alert('地图库加载失败，请刷新页面。');
+                return;
+            }
+
+            // 地图初始化
+            const map = L.map('map').setView([35.0, 105.0], 5);
+
+            // 定义多个瓦片源
+            const tileSources = [
+                {
+                    name: 'OpenStreetMap 德国镜像',
+                    url: 'https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png',
+                    attribution: '&copy; OpenStreetMap Germany'
+                },
+                {
+                    name: 'OpenStreetMap 法语镜像',
+                    url: 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',
+                    attribution: '&copy; OpenStreetMap France'
+                },
+                {
+                    name: 'CartoDB 浅色',
+                    url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+                    attribution: '&copy; CartoDB'
+                },
+                {
+                    name: 'CartoDB 深色',
+                    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+                    attribution: '&copy; CartoDB'
+                },
+                {
+                    name: 'OpenStreetMap 官方',
+                    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    attribution: '&copy; OpenStreetMap'
+                },
+                {
+                    name: 'Wikimedia 地图',
+                    url: 'https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png',
+                    attribution: '&copy; Wikimedia'
+                }
+            ];
+
+            let currentTileIndex = 0;
+            let currentTileLayer = null;
+
+            // 添加瓦片图层的函数
+            function addTileLayer(index) {
+                if (currentTileLayer) {
+                    map.removeLayer(currentTileLayer);
+                }
+                const source = tileSources[index];
+                try {
+                    currentTileLayer = L.tileLayer(source.url, {
+                        attribution: source.attribution,
+                        maxZoom: 19,
+                        minZoom: 3
+                    }).addTo(map);
+
+                    // 监听瓦片加载错误（可选，用于调试）
+                    currentTileLayer.on('tileerror', function(error) {
+                        console.warn('瓦片加载失败:', error.tile.src);
+                        document.getElementById('hintMessage').innerHTML = '<i class="fas fa-exclamation-triangle"></i> 当前地图瓦片加载缓慢，请尝试点击右上角切换。';
+                    });
+
+                    document.getElementById('hintMessage').innerHTML = `<i class="fas fa-info-circle"></i> 当前使用: ${source.name}。如果地图显示异常，请点击右上角切换。`;
+                } catch (e) {
+                    console.error('添加瓦片失败', e);
+                }
+            }
+
+            // 初始化默认瓦片
+            addTileLayer(currentTileIndex);
+
+            // 切换瓦片按钮
+            document.getElementById('switchTileBtn').addEventListener('click', function() {
+                currentTileIndex = (currentTileIndex + 1) % tileSources.length;
+                addTileLayer(currentTileIndex);
+            });
+
+            // 红色标记数据
+            const heritageSites = (window.XHCJ_DATA && window.XHCJ_DATA.getHeritageSites && window.XHCJ_DATA.getHeritageSites()) || [];
+
+            // 自定义红色图标
+            const redIcon = L.divIcon({
+                className: 'custom-marker',
+                iconSize: [24, 24],
+                popupAnchor: [0, -12]
+            });
+
+            // 添加标记
+            heritageSites.forEach(site => {
+                const marker = L.marker(site.coordinates, { icon: redIcon }).addTo(map);
+                marker.on('click', function() {
+                    updateInfoPanel(site);
+                });
+                marker.bindTooltip(site.name, { permanent: false, direction: 'top' });
+            });
+
+            // 更新信息卡片
+            function updateInfoPanel(site) {
+                document.getElementById('infoTitle').innerText = site.name;
+                document.getElementById('infoLocation').innerHTML = `<i class="fas fa-map-pin"></i> ${site.province} · ${site.city}`;
+                document.getElementById('infoDesc').innerText = site.desc;
+                document.getElementById('detailLink').href = site.link || '#';
+            }
+
+            const featuredSite = heritageSites.find(site => site.id === 'zhoulaozui') || heritageSites[0];
+            if (featuredSite) {
+                updateInfoPanel(featuredSite);
+            }
+
+            // 深入查看链接
+            document.getElementById('detailLink').addEventListener('click', function(e) {
+                if (this.getAttribute('href') === '#') {
+                    e.preventDefault();
+                    alert('详情页面开发中，敬请期待！');
+                }
+            });
+
+            // 可选：点击空白区域取消选中（不实现，保持简单）
+        });
+    </script>
+</body>
+</html>

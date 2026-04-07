@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>红色叙事地图 · 时空长廊</title>
+    <!-- Leaflet 核心样式与脚本 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Font Awesome 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- 自定义样式 -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+        body {
+            background: #1a2634;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        /* 头部 */
+        .header {
+            background: linear-gradient(135deg, #9b2c2c, #711e1e);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .header h1 i {
+            color: #ffd966;
+        }
+        .time-display {
+            background: rgba(255,255,255,0.15);
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        /* 时间轴区域 */
+        .timeline-container {
+            background: #0f172a;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #9b2c2c;
+        }
+        .timeline-label {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1rem;
+            color: #cbd5e1;
+        }
+        .timeline-label i {
+            color: #e34f4f;
+        }
+        .slider {
+            flex: 1;
+            min-width: 300px;
+        }
+        input[type=range] {
+            width: 100%;
+            height: 8px;
+            background: #2d3a4f;
+            border-radius: 10px;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: #b23b2c;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid #ffbb99;
+            box-shadow: 0 0 10px #ff6b4a;
+        }
+        .year-markers {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 6px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            padding: 0 10px;
+        }
+        /* 地图容器 */
+        .map-container {
+            flex: 1;
+            width: 100%;
+            position: relative;
+        }
+        #map {
+            height: 100%;
+            width: 100%;
+            background: #1e2b3c;
+        }
+        /* 三维模式切换按钮 (概念演示) */
+        .mode-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(5px);
+            color: white;
+            border: 1px solid #b23b2c;
+            border-radius: 40px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+        .mode-switch:hover {
+            background: #b23b2c;
+            border-color: #ffd966;
+        }
+        .mode-switch i {
+            font-size: 1.2rem;
+        }
+        /* 事件信息卡片 */
+        .event-card {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            right: 30px;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-radius: 24px;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+            border-left: 8px solid #b23b2c;
+            z-index: 1000;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            opacity: 0;
+        }
+        .event-card.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .event-card h2 {
+            font-size: 1.8rem;
+            color: #0f172a;
+            margin-bottom: 0.3rem;
+        }
+        .event-card .year {
+            color: #b23b2c;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+        .event-card .desc {
+            color: #334155;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+        .event-card .related {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: #475569;
+        }
+        .event-card .related i {
+            color: #b23b2c;
+            width: 20px;
+        }
+        .event-card .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #64748b;
+            cursor: pointer;
+        }
+        .event-card .close-btn:hover {
+            color: #b23b2c;
+        }
+        /* 图例 */
+        .legend {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 40px;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.9rem;
+            color: #1e293b;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border: 1px solid #e2e8f0;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .legend-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #b23b2c;
+            box-shadow: 0 0 0 3px rgba(178,59,44,0.3);
+        }
+        .legend-dot.special {
+            background: #fbbf24;
+            box-shadow: 0 0 0 3px rgba(251,191,36,0.3);
+        }
+        @media (max-width: 700px) {
+            .header { flex-direction: column; align-items: flex-start; }
+            .timeline-container { flex-direction: column; align-items: stretch; }
+            .event-card { left: 15px; right: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 id="timelineHeading"><i class="fas fa-map-marked-alt"></i> 红色叙事地图 · 时空中的湘鄂西</h1>
+        <div class="time-display" id="currentYear">1930</div>
+    </div>
+
+    <!-- 时间轴 -->
+    <div class="timeline-container">
+        <div class="timeline-label">
+            <i class="fas fa-clock"></i>
+            <span id="timelineLead">拖动时间轴，探索不同时期的红色记忆</span>
+        </div>
+        <div class="slider">
+            <input type="range" id="timelineSlider" min="1920" max="1949" value="1930" step="1">
+            <div class="year-markers">
+                <span>1920</span><span>1925</span><span>1930</span><span>1935</span><span>1940</span><span>1945</span><span>1949</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 地图容器 -->
+    <div class="map-container">
+        <div id="map"></div>
+
+        <!-- 三维模式切换按钮（概念演示，点击后切换地图倾斜效果） -->
+        <div class="mode-switch" id="toggle3d">
+            <i class="fas fa-cube"></i> <span>切换到三维视角</span>
+        </div>
+
+        <!-- 事件信息卡片 -->
+        <div class="event-card" id="eventCard">
+            <button class="close-btn" id="closeCard"><i class="fas fa-times"></i></button>
+            <h2 id="eventTitle">湘鄂西省苏维埃政府成立</h2>
+            <div class="year" id="eventYear">1930年</div>
+            <div class="desc" id="eventDesc">湘鄂西省苏维埃政府在此成立，标志着以周老嘴为中心的湘鄂西革命根据地正式形成。贺龙、周逸群等领导了根据地的创建工作。</div>
+            <div class="related">
+                <span><i class="fas fa-user"></i> 相关人物: 贺龙、周逸群、段德昌</span>
+                <span><i class="fas fa-building"></i> 关联建筑: 湘鄂西省苏维埃政府旧址、红二军团指挥部</span>
+            </div>
+        </div>
+
+        <!-- 图例 -->
+        <div class="legend">
+            <div class="legend-item"><span class="legend-dot"></span> 重要事件</div>
+            <div class="legend-item"><span class="legend-dot special"></span> 当前年份事件</div>
+        </div>
+    </div>
+
+    <script src="data/app-data.js"></script>
+    <script>
+        (function() {
+            const scene = window.XHCJ_DATA && window.XHCJ_DATA.getScene && window.XHCJ_DATA.getScene('zhoulaozui');
+            if (!scene) {
+                return;
+            }
+            const events = window.XHCJ_DATA.getTimelineByScene('zhoulaozui');
+            const years = events.map(event => event.year);
+            const minYear = Math.min.apply(null, years);
+            const maxYear = Math.max.apply(null, years);
+            const defaultYear = 1930;
+
+            document.getElementById('timelineHeading').innerHTML = `<i class="fas fa-map-marked-alt"></i> 红色叙事地图 · 时空中的${scene.shortName}`;
+            document.getElementById('timelineLead').innerText = `拖动时间轴，探索${scene.shortName}的重要历史节点`;
+
+            // 初始化地图
+            const map = L.map('map').setView([30.0, 112.0], 7); // 以湘鄂西为中心
+
+            // 添加多个瓦片源以提高可用性
+            const tileSources = [
+                {
+                    name: 'OpenStreetMap 德国镜像',
+                    url: 'https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png',
+                    attribution: '&copy; OpenStreetMap Germany'
+                },
+                {
+                    name: '卫星影像',
+                    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                    attribution: '&copy; Esri'
+                }
+            ];
+
+            let currentTile = L.tileLayer(tileSources[0].url, {
+                attribution: tileSources[0].attribution,
+                maxZoom: 18
+            }).addTo(map);
+
+            // 可以切换瓦片（简单实现）
+            let tileIndex = 0;
+            document.getElementById('toggle3d').addEventListener('click', function() {
+                // 切换瓦片模拟“三维”效果（实际是切换底图，同时微调地图视角）
+                tileIndex = (tileIndex + 1) % tileSources.length;
+                map.removeLayer(currentTile);
+                currentTile = L.tileLayer(tileSources[tileIndex].url, {
+                    attribution: tileSources[tileIndex].attribution
+                }).addTo(map);
+                // 同时稍微倾斜视角（Leaflet不支持倾斜，但我们可以旋转？不能。这里仅作示意）
+                alert('底图已切换为：' + tileSources[tileIndex].name);
+            });
+
+            // 存储所有标记的数组
+            let markers = [];
+
+            // 当前选中的事件卡片
+            const eventCard = document.getElementById('eventCard');
+            const closeCardBtn = document.getElementById('closeCard');
+            const eventTitle = document.getElementById('eventTitle');
+            const eventYear = document.getElementById('eventYear');
+            const eventDesc = document.getElementById('eventDesc');
+            const eventRelated = document.querySelector('.event-card .related');
+
+            // 关闭卡片
+            closeCardBtn.addEventListener('click', function() {
+                eventCard.classList.remove('show');
+            });
+
+            // 根据年份过滤并更新标记
+            function updateMarkersByYear(year) {
+                // 清除现有标记
+                markers.forEach(m => map.removeLayer(m));
+                markers = [];
+
+                // 过滤出当年的事件（前后一年内也算？为了演示，我们只显示精确匹配，也可放宽）
+                // 但为了更丰富，我们可以显示当年以及前后一年的事件
+                const yearNum = parseInt(year);
+                const filtered = events.filter(e => Math.abs(e.year - yearNum) <= 1); // 前后一年内的事件
+
+                // 创建新标记
+                filtered.forEach(e => {
+                    // 判断是否完全匹配当前年份（高亮）
+                    const isExact = (e.year === yearNum);
+                    // 自定义图标：红色为普通，金色为精确匹配
+                    const icon = L.divIcon({
+                        className: 'custom-marker',
+                        html: `<div style="width: 20px; height: 20px; background: ${isExact ? '#fbbf24' : '#b23b2c'}; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 3px ${isExact ? 'rgba(251,191,36,0.4)' : 'rgba(178,59,44,0.4)'};"></div>`,
+                        iconSize: [26, 26],
+                        popupAnchor: [0, -13]
+                    });
+
+                    const marker = L.marker([e.lat, e.lng], { icon }).addTo(map);
+                    
+                    // 绑定点击事件，展示详细信息
+                    marker.on('click', function() {
+                        showEventDetails(e);
+                    });
+
+                    // 绑定悬浮显示名称
+                    marker.bindTooltip(e.name, { permanent: false, direction: 'top' });
+
+                    markers.push(marker);
+                });
+
+                // 如果没有事件，显示提示
+                if (filtered.length === 0) {
+                    // 可选：显示一个提示层
+                }
+            }
+
+            // 展示事件详情卡片
+            function showEventDetails(event) {
+                eventTitle.innerText = event.name;
+                eventYear.innerText = event.year + '年 · ' + event.location;
+                eventDesc.innerText = event.description;
+                eventRelated.innerHTML = `
+                    <span><i class="fas fa-user"></i> 相关人物: ${event.figures}</span>
+                    <span><i class="fas fa-building"></i> 关联建筑: ${event.buildings}</span>
+                `;
+                eventCard.classList.add('show');
+            }
+
+            // 时间轴滑块事件
+            const slider = document.getElementById('timelineSlider');
+            const yearDisplay = document.getElementById('currentYear');
+
+            slider.min = minYear;
+            slider.max = maxYear;
+            slider.value = defaultYear;
+            yearDisplay.innerText = defaultYear;
+
+            slider.addEventListener('input', function() {
+                const year = this.value;
+                yearDisplay.innerText = year;
+                updateMarkersByYear(year);
+            });
+
+            // 初始化：设置为默认年份
+            updateMarkersByYear(defaultYear);
+
+            // 可选：添加一个简单的飞行动画，展示周老嘴
+            setTimeout(() => {
+                map.flyTo(scene.coordinates, 10);
+            }, 500);
+
+            // 为每个事件在全局范围内自动展示？不，由用户点击触发
+
+            // 添加比例尺
+            L.control.scale({ imperial: false, metric: true }).addTo(map);
+
+            // 处理地图点击关闭卡片（可选）
+            map.on('click', function() {
+                eventCard.classList.remove('show');
+            });
+        })();
+    </script>
+
+    <!-- 添加一些自定义样式以美化弹出框等 -->
+    <style>
+        /* 调整leaflet弹出框样式 */
+        .leaflet-popup-content {
+            font-family: 'Inter', sans-serif;
+            color: #1e293b;
+        }
+        .leaflet-popup-content-wrapper {
+            border-radius: 16px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(5px);
+            border-left: 4px solid #b23b2c;
+        }
+        .leaflet-popup-tip {
+            background: rgba(255,255,255,0.95);
+        }
+        .custom-marker {
+            background: transparent;
+            border: none;
+        }
+        /* 底部卡片样式已在前面定义 */
+    </style>
+</body>
+</html>
