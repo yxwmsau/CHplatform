@@ -39,6 +39,73 @@
                     caption: '老正街沿线的街区风貌与历史肌理'
                 }
             ],
+            immersive: {
+                heroImage: 'images/湘鄂西大门.jpg',
+                heroAlt: '周老嘴沉浸式场景预览',
+                intro: '以周老嘴纪念馆入口空间为第一视角，串联纪念馆前场、核心旧址立面和室内复原讲解点，形成第一版可交互沉浸式浏览场景。',
+                sceneLink: 'scene.html?sceneId=zhoulaozui',
+                viewer: {
+                    mode: 'image',
+                    provider: 'prototype',
+                    source: 'images/湘鄂西大门.jpg',
+                    fallbackImage: 'images/湘鄂西大门.jpg',
+                    alt: '周老嘴沉浸式场景预览',
+                    supportsPanZoom: true,
+                    supportsHotspots: true,
+                    futureAdapters: ['iframe', 'threejs', 'supersplat'],
+                    statusText: '当前为第一阶段原型查看器，后续可切换为真实 WebGL / iframe / Supersplat 场景加载器。'
+                },
+                cameraPresets: {
+                    default: {
+                        zoom: 1,
+                        offsetX: 0,
+                        offsetY: 0,
+                        label: '入口总览',
+                        hint: '从入口镜头切入场景，建立周老嘴纪念馆整体空间认知。'
+                    },
+                    'gate-square': {
+                        zoom: 1,
+                        offsetX: 0,
+                        offsetY: 0,
+                        label: '入口导览',
+                        hint: '从入口镜头切入场景，作为首次浏览的主视角。'
+                    },
+                    'government-site': {
+                        zoom: 1.28,
+                        offsetX: -70,
+                        offsetY: 28,
+                        label: '旧址立面',
+                        hint: '镜头拉近至核心建筑立面，便于联动图纸与建筑档案。'
+                    },
+                    'meeting-room': {
+                        zoom: 1.42,
+                        offsetX: -120,
+                        offsetY: 12,
+                        label: '室内讲解',
+                        hint: '镜头进一步推近，用于承载室内讲解与人物故事叙述。'
+                    }
+                },
+                guideStops: [
+                    {
+                        id: 'entry-stop',
+                        hotspotId: 'gate-square',
+                        title: '入口导览',
+                        summary: '从纪念馆前场切入，建立场景方位感和街区整体认知。'
+                    },
+                    {
+                        id: 'facade-stop',
+                        hotspotId: 'government-site',
+                        title: '旧址立面',
+                        summary: '聚焦核心建筑外立面，联动建筑档案、图纸和平面关系。'
+                    },
+                    {
+                        id: 'interior-stop',
+                        hotspotId: 'meeting-room',
+                        title: '室内讲解',
+                        summary: '切入会议室复原点，展示人物活动与革命叙事。'
+                    }
+                ]
+            },
             models: [
                 {
                     id: 'panorama',
@@ -89,24 +156,39 @@
                     name: '纪念馆前场',
                     type: '入口节点',
                     position: { x: 0.48, y: 0.58, z: 0.12 },
+                    title: '纪念馆前场入口',
+                    description: '这里是用户进入周老嘴场景后的第一观察点，适合展示整体空间关系、导览说明与纪念馆总体介绍。',
                     cameraHint: '从入口镜头切入场景，作为首次浏览的主视角。',
-                    archiveRefs: ['story', 'gallery', 'models']
+                    archiveRefs: ['story', 'gallery', 'models'],
+                    relatedGalleryIds: ['gate'],
+                    relatedDrawingIds: [],
+                    relatedTimelineIds: [1, 3]
                 },
                 {
                     id: 'government-site',
                     name: '省苏维埃政府旧址',
                     type: '建筑热点',
                     position: { x: 0.55, y: 0.46, z: 0.18 },
+                    title: '省苏维埃政府旧址',
+                    description: '场景中的核心建筑热点，用于挂接建筑基础档案、平立剖图纸和关键历史事件。',
                     cameraHint: '聚焦核心建筑立面，联动建筑档案与历史事件。',
-                    archiveRefs: ['timeline', 'drawings']
+                    archiveRefs: ['timeline', 'drawings'],
+                    relatedGalleryIds: ['street'],
+                    relatedDrawingIds: ['plan', 'elevation', 'section'],
+                    relatedTimelineIds: [1, 3, 5]
                 },
                 {
                     id: 'meeting-room',
                     name: '会议室复原点',
                     type: '室内讲解点',
                     position: { x: 0.61, y: 0.52, z: 0.16 },
+                    title: '会议室复原点',
+                    description: '适合承载人物讲解、场景复原和革命故事叙述，是后续自动导览的重要节点。',
                     cameraHint: '切入室内讲解镜头，展示革命会议场景。',
-                    archiveRefs: ['story', 'gallery']
+                    archiveRefs: ['story', 'gallery'],
+                    relatedGalleryIds: ['gate'],
+                    relatedDrawingIds: [],
+                    relatedTimelineIds: [1]
                 }
             ],
             timeline: [
@@ -205,6 +287,321 @@
                     figures: '解放军第四野战军',
                     buildings: '监利解放纪念地',
                     major: true
+                }
+            ]
+        },
+        jiangzuoyifeng: {
+            id: 'jiangzuoyifeng',
+            slug: 'jiangzuoyifeng',
+            name: '江左遗风省委组织部旧址',
+            shortName: '江左遗风旧址',
+            subtitle: '3D Tiles 接入测试场景',
+            city: '湖北省监利市',
+            town: '周老嘴镇',
+            province: '湖北省',
+            displayCity: '荆州',
+            regionCode: '鄂',
+            period: '资料待补充',
+            category: '重要机构驻地旧址',
+            protectionLevel: '资料待补充',
+            builtYear: '资料待补充',
+            builtYearNote: '当前先用于真实三维场景接入测试。',
+            address: '江左遗风（6省委组织部旧址）',
+            coordinates: [29.99, 112.92],
+            coverImage: 'images/全景图.png',
+            archiveCardImage: 'images/全景图.png',
+            summary: '该场景已存在完整三维导出结果，包含 b3dm、pnts、osgb、fbx、ply 等多套格式，当前优先用于验证 Web 端真实 3D Tiles 浏览链路。',
+            shortStory: '目前先以真实三维浏览测试为主，历史档案与图纸信息后续再按旧址资料逐步补齐。',
+            longStoryTitle: '真实三维场景接入测试',
+            longStory: '江左遗风旧址目录下已导出完整的三维结果树，其中 model-b3dm 包含 tileset.json 入口文件，适合作为当前平台接入 Cesium 3D Tiles 的首个实验样本。现阶段先验证模型加载、镜头切换、导览节点与档案面板联动，后续再补充更完整的史实档案。',
+            readMoreHint: '该点位的史实档案信息正在整理中。',
+            gallery: [
+                {
+                    id: 'jiangzuo-model',
+                    title: '三维场景接入测试',
+                    imageUrl: 'images/全景图.png',
+                    caption: '当前使用真实 3D Tiles 结果进行 Web 端加载测试。'
+                }
+            ],
+            immersive: {
+                heroImage: 'images/全景图.png',
+                heroAlt: '江左遗风三维场景加载预览',
+                intro: '该点位当前切换为首视角沉浸式浏览测试，用户进入后不再是绕模型看，而是站在场景内部环顾与驻足切换。',
+                sceneLink: 'scene.html?sceneId=jiangzuoyifeng',
+                archiveLink: 'scene.html?sceneId=jiangzuoyifeng',
+                defaultAssetMode: 'gsplat',
+                viewer: {
+                    mode: 'cesium-tiles',
+                    provider: 'cesium',
+                    tilesetUrl: '../高斯vr成果/江左遗风（6省委组织部旧址）/新建项目-20260227/result/3D/model-b3dm/tileset.json',
+                    origin: {
+                        longitude: 112.92,
+                        latitude: 29.99,
+                        height: 32,
+                        heading: 0,
+                        pitch: 0,
+                        roll: 0
+                    },
+                    initialRange: 220,
+                    moveStep: 1.8,
+                    maximumScreenSpaceError: 1.5,
+                    dynamicScreenSpaceError: false,
+                    foveatedScreenSpaceError: false,
+                    skipLevelOfDetail: false,
+                    preferLeaves: true,
+                    loadSiblings: true,
+                    cullRequestsWhileMoving: false,
+                    immediatelyLoadDesiredLevelOfDetail: true,
+                    progressiveResolutionHeightFraction: 0.15,
+                    resolutionScale: 1.75,
+                    msaaSamples: 4,
+                    supportsPanZoom: false,
+                    supportsHotspots: false,
+                    futureAdapters: ['3d-tiles', 'pnts', 'gltf'],
+                    statusText: '已切换为首视角沉浸式查看器；左键拖动可环顾四周，滚轮或上下按钮可前后移动。当前已启用高质量分片加载。'
+                },
+                viewerVariants: {
+                    gsplat: {
+                        switchLabel: '高斯泼溅',
+                        mode: 'iframe',
+                        provider: 'supersplat viewer',
+                        source: 'supersplat/index.html?settings=./jiangzuoyifeng-settings.json&content=../../%E9%AB%98%E6%96%AFvr%E6%88%90%E6%9E%9C/%E6%B1%9F%E5%B7%A6%E9%81%97%E9%A3%8E%EF%BC%886%E7%9C%81%E5%A7%94%E7%BB%84%E7%BB%87%E9%83%A8%E6%97%A7%E5%9D%80%EF%BC%89/%E6%96%B0%E5%BB%BA%E9%A1%B9%E7%9B%AE-20260227/result/3D/model-gs-ply/ue/gs_full.ply&poster=../images/%E5%85%A8%E6%99%AF%E5%9B%BE.png&aa&fullload&hpr=1&camera=fly&immersive=1&hideorbit=1&maxpitch=80&tx=-4.440023899078369&ty=0.000000130553615917961&tz=-2.010570764541626&qx=-0.001203945170660559&qy=-0.1395621318751207&qz=0.9796321109683854&qw=0.14436720203052467',
+                        supportsPanZoom: false,
+                        supportsHotspots: false,
+                        futureAdapters: ['supersplat'],
+                        statusText: '当前为高斯泼溅自由浏览路线；保留直接拖拽转头，并恢复场景内自由移动。若加载较慢，请等待高质量 splat 完成排序与补载。'
+                    },
+                    mesh: {
+                        switchLabel: '网格模型',
+                        provider: 'cesium mesh',
+                        tilesetUrl: '../高斯vr成果/江左遗风（6省委组织部旧址）/新建项目-20260227/result/3D/model-b3dm/tileset.json',
+                        maximumScreenSpaceError: 1.5,
+                        dynamicScreenSpaceError: false,
+                        foveatedScreenSpaceError: false,
+                        skipLevelOfDetail: false,
+                        preferLeaves: true,
+                        loadSiblings: true,
+                        cullRequestsWhileMoving: false,
+                        immediatelyLoadDesiredLevelOfDetail: true,
+                        progressiveResolutionHeightFraction: 0.15,
+                        resolutionScale: 1.75,
+                        msaaSamples: 4,
+                        statusText: '当前为网格模型路线，适合看建筑外轮廓和体块，但细节上限受导出质量影响。'
+                    },
+                    pointcloud: {
+                        switchLabel: '点云实验',
+                        provider: 'cesium point cloud',
+                        tilesetUrl: '../高斯vr成果/江左遗风（6省委组织部旧址）/新建项目-20260227/result/3D/point-pnts/tileset.json',
+                        maximumScreenSpaceError: 1,
+                        dynamicScreenSpaceError: false,
+                        foveatedScreenSpaceError: false,
+                        skipLevelOfDetail: false,
+                        preferLeaves: true,
+                        loadSiblings: true,
+                        cullRequestsWhileMoving: false,
+                        immediatelyLoadDesiredLevelOfDetail: true,
+                        progressiveResolutionHeightFraction: 0.1,
+                        resolutionScale: 2,
+                        msaaSamples: 4,
+                        pointSize: 3,
+                        pointCloudShading: {
+                            attenuation: true,
+                            geometricErrorScale: 0.2,
+                            maximumAttenuation: 5,
+                            eyeDomeLighting: true,
+                            eyeDomeLightingStrength: 1,
+                            eyeDomeLightingRadius: 1.2
+                        },
+                        statusText: '当前为点云实验路线。该模式更适合验证空间采集完整度，不适合作为近距离沉浸式观看的最终方案。'
+                    }
+                },
+                cameraPresets: {
+                    default: {
+                        label: '前场中段',
+                        hint: '默认落在前场中段的实拍机位，先保证进入时视线稳定落在主体建筑正前方。',
+                        gsplatView: {
+                            position: [-4.87613, 2.580352, -3.429979],
+                            target: [-4.912998, 1.113, 2.387711],
+                            yawLimit: 12,
+                            pitchLimit: 8
+                        },
+                        view: {
+                            mode: 'immersive',
+                            east: -3,
+                            north: -3,
+                            up: 2.2,
+                            heading: 2,
+                            pitch: -3,
+                            roll: 0
+                        }
+                    },
+                    'courtyard-overview': {
+                        label: '前场中段',
+                        hint: '使用前场中段的实拍机位建立第一眼方位，不再把默认点扔到偏侧位置。',
+                        gsplatView: {
+                            position: [-4.87613, 2.580352, -3.429979],
+                            target: [-4.912998, 1.113, 2.387711],
+                            yawLimit: 12,
+                            pitchLimit: 8
+                        },
+                        view: {
+                            mode: 'immersive',
+                            east: -3,
+                            north: -3,
+                            up: 2.2,
+                            heading: 2,
+                            pitch: -3,
+                            roll: 0
+                        }
+                    },
+                    'facade-focus': {
+                        label: '前场西段',
+                        hint: '退到前场西段实拍机位，从同一条采集路径的左侧位置观察主体立面。',
+                        gsplatView: {
+                            position: [-5.934017, 3.415136, -5.693762],
+                            target: [-5.677007, 1.752145, 0.06544],
+                            yawLimit: 12,
+                            pitchLimit: 8
+                        },
+                        view: {
+                            mode: 'immersive',
+                            east: -4.2,
+                            north: -5.7,
+                            up: 2.05,
+                            heading: 6,
+                            pitch: -2.5,
+                            roll: 0
+                        }
+                    },
+                    'roof-structure': {
+                        label: '前场东段',
+                        hint: '切到前场东段实拍机位，从同一路径的右侧位置继续看向主体建筑。',
+                        gsplatView: {
+                            position: [-0.498055, 0.386401, -1.532282],
+                            target: [-1.268471, -0.695647, 4.31884],
+                            yawLimit: 12,
+                            pitchLimit: 8
+                        },
+                        view: {
+                            mode: 'immersive',
+                            east: 1.65,
+                            north: -1.1,
+                            up: 1.95,
+                            heading: -6,
+                            pitch: -2.5,
+                            roll: 0
+                        }
+                    }
+                },
+                guideStops: [
+                    {
+                        id: 'jiangzuo-stop-1',
+                        hotspotId: 'courtyard-overview',
+                        title: '前场中段',
+                        summary: '默认落在主体建筑正前方附近的实拍机位，先把第一眼视图拉回到正常入口感。'
+                    },
+                    {
+                        id: 'jiangzuo-stop-2',
+                        hotspotId: 'facade-focus',
+                        title: '前场西段',
+                        summary: '沿同一条实拍路径向西侧挪一步，仍然保持朝向主体建筑，不再跨到错误区域。'
+                    },
+                    {
+                        id: 'jiangzuo-stop-3',
+                        hotspotId: 'roof-structure',
+                        title: '前场东段',
+                        summary: '沿同一路径向东侧移动，形成左右两个补充视角，但仍停留在同一个清晰前场带。'
+                    }
+                ]
+            },
+            models: [
+                {
+                    id: 'tiles-demo',
+                    title: 'Cesium 3D Tiles 实景模型',
+                    description: '直接加载现有 tileset.json 与 b3dm 分块，验证浏览器内真实三维浏览能力。',
+                    previewImage: 'images/全景图.png',
+                    actionLabel: '进入场景',
+                    actionHint: '已接入 3D Tiles 测试链路。'
+                }
+            ],
+            drawings: [],
+            hotspots: [
+                {
+                    id: 'courtyard-overview',
+                    name: '前场中段',
+                    type: '导览节点',
+                    position: { x: 0.4, y: 0.45, z: 0.1 },
+                    title: '前场中段',
+                    description: '把默认首视角放回主体建筑正前方附近，先让用户以正常的到场视角进入场景。',
+                    cameraHint: '从中段正视建筑，先建立入口和主体的空间关系。',
+                    archiveRefs: ['story'],
+                    relatedGalleryIds: ['jiangzuo-model'],
+                    relatedDrawingIds: [],
+                    relatedTimelineIds: [1]
+                },
+                {
+                    id: 'facade-focus',
+                    name: '前场西段',
+                    type: '导览节点',
+                    position: { x: 0.55, y: 0.5, z: 0.1 },
+                    title: '前场西段',
+                    description: '第二个驻足点位于同一条实拍路径的西侧，作为中段视角的左侧补充。',
+                    cameraHint: '从左侧前场看向主体立面，观察墙面、门窗和前场过渡。',
+                    archiveRefs: ['gallery'],
+                    relatedGalleryIds: ['jiangzuo-model'],
+                    relatedDrawingIds: [],
+                    relatedTimelineIds: [2]
+                },
+                {
+                    id: 'roof-structure',
+                    name: '前场东段',
+                    type: '导览节点',
+                    position: { x: 0.62, y: 0.35, z: 0.1 },
+                    title: '前场东段',
+                    description: '第三个驻足点位于同一路径的东侧，和前场西段形成成对的横向补充观察。',
+                    cameraHint: '从右侧前场继续看向主体建筑，补充另一侧的立面关系。',
+                    archiveRefs: ['timeline'],
+                    relatedGalleryIds: ['jiangzuo-model'],
+                    relatedDrawingIds: [],
+                    relatedTimelineIds: [3]
+                }
+            ],
+            timeline: [
+                {
+                    id: 1,
+                    name: '三维导出结果整理',
+                    year: 2026,
+                    lat: 29.99,
+                    lng: 112.92,
+                    location: '江左遗风旧址',
+                    description: '完成面向 Web 接入测试所需的模型结果梳理，确认 b3dm、pnts、osgb、fbx、ply 等多套导出可用。',
+                    figures: '项目团队',
+                    buildings: '江左遗风旧址',
+                    major: true
+                },
+                {
+                    id: 2,
+                    name: '3D Tiles 首次接入平台',
+                    year: 2026,
+                    lat: 29.99,
+                    lng: 112.92,
+                    location: '平台代码',
+                    description: '将 tileset.json 作为真实场景入口接入 scene.html，用于验证浏览、镜头和面板联动能力。',
+                    figures: '项目团队',
+                    buildings: '数字平台',
+                    major: true
+                },
+                {
+                    id: 3,
+                    name: '后续补录史实档案',
+                    year: 2026,
+                    lat: 29.99,
+                    lng: 112.92,
+                    location: '江左遗风旧址',
+                    description: '待确认该点位更完整的旧址历史资料后，再补齐人物、事件、图纸和照片联动内容。',
+                    figures: '项目团队',
+                    buildings: '江左遗风旧址',
+                    major: false
                 }
             ]
         }
