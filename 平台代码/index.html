@@ -455,27 +455,73 @@
     <!-- 预留的 JavaScript 接口：方便后续实现页面跳转（SPA 或传统跳转） -->
     <script>
         (function() {
-            // 获取所有带 js-link 类的元素，这些元素将来需要跳转
             const links = document.querySelectorAll('.js-link');
             
-            // 为每个链接添加点击事件（这里仅做演示，目前只阻止默认跳转并打印，实际开发可替换为路由跳转）
-            // 目前因为 href="#" 会回到顶部，所以暂时阻止默认行为，方便查看样式
-            // 后续开发时，可以删除这段事件监听，或者修改为真正的跳转逻辑
             links.forEach(link => {
                 link.addEventListener('click', (e) => {
+                    const page = link.getAttribute('data-page');
                     const href = link.getAttribute('href');
-                    if (href === '#') {
+                    
+                    if (page) {
                         e.preventDefault();
-                        const page = link.getAttribute('data-page') || 'unknown';
-                        console.log(`准备跳转到：${page} 页面（实际跳转逻辑待实现）`);
+                        const pageMap = {
+                            explore: 'information.html',
+                            map: 'map.html',
+                            about: '#',
+                            login: 'login.html',
+                            upload: 'upload center.html',
+                            'full-map': 'time.html'
+                        };
+                        const targetUrl = pageMap[page] || '#';
+                        if (targetUrl !== '#') {
+                            window.location.href = targetUrl;
+                        }
+                    } else if (href && href !== '#') {
+                        e.preventDefault();
+                        window.location.href = href;
                     }
-                // 如果 href 不是 #，则不阻止，浏览器会自动跳转
                 });
             });
-        );
 
-            // 特别处理上传卡片——它是一个<a>包裹，也继承了js-link，所以点击同样被捕获
-            // 如果你希望点击上传卡片跳转到上传页面，可以在未来替换为真正的URL
+            const searchInput = document.querySelector('.search-bar input');
+            const searchButton = document.querySelector('.search-bar button');
+
+            function performSearch() {
+                const query = searchInput.value.trim();
+                if (query) {
+                    alert(`搜索：\"${query}\"\n\n（搜索功能将在后续版本中实现）`);
+                } else {
+                    alert('请输入搜索关键词');
+                }
+            }
+
+            if (searchButton) {
+                searchButton.addEventListener('click', performSearch);
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        performSearch();
+                    }
+                });
+            }
+
+            const uploadCard = document.querySelector('.upload-card');
+            if (uploadCard) {
+                uploadCard.style.cursor = 'pointer';
+                uploadCard.addEventListener('click', () => {
+                    window.location.href = 'upload center.html';
+                });
+            }
+
+            const mapCard = document.querySelector('.map-placeholder');
+            if (mapCard) {
+                mapCard.style.cursor = 'pointer';
+                mapCard.addEventListener('click', () => {
+                    window.location.href = 'map.html';
+                });
+            }
         })();
     </script>
     <!-- 说明：所有可交互区域（登录、上传、地图、卡片链接）均已预留接口，后续只需修改 data-page 对应的跳转地址即可。 -->

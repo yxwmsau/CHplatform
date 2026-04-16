@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 / 注册</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #fef6f5 0%, #fff 50%, #f5f8ff 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 460px;
+            width: 100%;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #64748b;
+            text-decoration: none;
+            margin-bottom: 2rem;
+            transition: color 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .back-link:hover {
+            color: #b23b2c;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.1);
+            padding: 2.5rem;
+            border: 1px solid #e9eef2;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 3rem;
+            color: #b23b2c;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .title h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .title p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f1f5f9;
+            border-radius: 16px;
+            padding: 0.3rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 0.8rem;
+            text-align: center;
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .tab.active {
+            background: #ffffff;
+            color: #b23b2c;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 0.5rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            transition: color 0.2s;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem 1.2rem 1rem 3rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #b23b2c;
+            box-shadow: 0 0 0 4px rgba(178, 59, 44, 0.1);
+        }
+
+        .form-group input:focus + i,
+        .input-wrapper:focus-within i {
+            color: #b23b2c;
+        }
+
+        .forgot-link {
+            text-align: right;
+            margin-top: -0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .forgot-link a {
+            color: #b23b2c;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .forgot-link a:hover {
+            text-decoration: underline;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #b23b2c, #a5271e);
+            color: white;
+            box-shadow: 0 4px 15px rgba(178, 59, 44, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(178, 59, 44, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        .social-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 0.9rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #334155;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .social-btn:hover {
+            border-color: #cbd5e1;
+            background: #f8fafc;
+        }
+
+        .social-btn i {
+            font-size: 1.2rem;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .form-footer a {
+            color: #b23b2c;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .success-message {
+            display: none;
+            background: #dcfce7;
+            border: 1px solid #86efac;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .error-message {
+            display: none;
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 1.8rem;
+            }
+
+            .title h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            返回首页
+        </a>
+        
+        <div class="card">
+            <div class="logo">
+                <i class="fas fa-landmark"></i>
+            </div>
+            <div class="title">
+                <h1>红色历史街区</h1>
+                <p>欢迎回来！</p>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="login">登录</button>
+                <button class="tab" data-tab="register">注册</button>
+            </div>
+
+            <div id="successMsg" class="success-message"></div>
+            <div id="errorMsg" class="error-message"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>邮箱 / 手机号</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="loginEmail" placeholder="请输入邮箱或手机号" required>
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>密码</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="loginPassword" placeholder="请输入密码" required>
+                        <i class="fas fa-lock"></i>
+                    </div>
+                </div>
+
+                <div class="forgot-link">
+                    <a href="#">忘记密码？</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> 登录
+                </button>
+            </form>
+
+            <form id="registerForm" style="display: none;">
+                <div class="form-group">
+                    <label>用户名</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="regUsername" placeholder="请输入用户名" required>
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>邮箱</label>
+                    <div class="input-wrapper">
+                        <input type="email" id="regEmail" placeholder="请输入邮箱" required>
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>密码</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="regPassword" placeholder="请设置密码（至少6位）" required minlength="6">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>确认密码</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="regConfirmPassword" placeholder="请再次输入密码" required>
+                        <i class="fas fa-lock"></i>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> 注册
+                </button>
+            </form>
+
+            <div class="divider">或</div>
+
+            <div class="social-buttons">
+                <button class="social-btn">
+                    <i class="fab fa-weixin" style="color: #07c160;"></i>
+                    微信
+                </button>
+                <button class="social-btn">
+                    <i class="fab fa-qq" style="color: #12b7f5;"></i>
+                    QQ
+                </button>
+            </div>
+
+            <div class="form-footer" id="loginFooter">
+                还没有账号？ <a href="#" id="toRegister">立即注册</a>
+            </div>
+
+            <div class="form-footer" id="registerFooter" style="display: none;">
+                已有账号？ <a href="#" id="toLogin">立即登录</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tabs = document.querySelectorAll('.tab');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const loginFooter = document.getElementById('loginFooter');
+        const registerFooter = document.getElementById('registerFooter');
+        const toRegister = document.getElementById('toRegister');
+        const toLogin = document.getElementById('toLogin');
+        const successMsg = document.getElementById('successMsg');
+        const errorMsg = document.getElementById('errorMsg');
+
+        function showMessage(msg, isSuccess) {
+            successMsg.classList.remove('show');
+            errorMsg.classList.remove('show');
+            
+            if (isSuccess) {
+                successMsg.textContent = msg;
+                successMsg.classList.add('show');
+            } else {
+                errorMsg.textContent = msg;
+                errorMsg.classList.add('show');
+            }
+
+            setTimeout(() => {
+                successMsg.classList.remove('show');
+                errorMsg.classList.remove('show');
+            }, 3000);
+        }
+
+        function switchTab(tabName) {
+            tabs.forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.tab === tabName);
+            });
+
+            if (tabName === 'login') {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+                loginFooter.style.display = 'block';
+                registerFooter.style.display = 'none';
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+                loginFooter.style.display = 'none';
+                registerFooter.style.display = 'block';
+            }
+        }
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                switchTab(tab.dataset.tab);
+            });
+        });
+
+        toRegister.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchTab('register');
+        });
+
+        toLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchTab('login');
+        });
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showMessage('请填写完整信息', false);
+                return;
+            }
+
+            showMessage('登录成功！正在跳转...', true);
+            
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        });
+
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('regUsername').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+
+            if (!username || !email || !password || !confirmPassword) {
+                showMessage('请填写完整信息', false);
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showMessage('两次输入的密码不一致', false);
+                return;
+            }
+
+            if (password.length < 6) {
+                showMessage('密码至少需要6位', false);
+                return;
+            }
+
+            showMessage('注册成功！请登录', true);
+            
+            setTimeout(() => {
+                switchTab('login');
+            }, 1500);
+        });
+    </script>
+</body>
+</html>
